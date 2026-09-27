@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Recruitment requirements, gift preferences and a recruit checklist for every Fire Emblem: Fortune's Weave route.">
+<meta name="description" content="Recruitment requirements, gift preferences, a gift planner and a recruit checklist for every Fire Emblem: Fortune's Weave route.">
 <meta name="theme-color" content="#eef0f4" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#10141e" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -88,6 +88,35 @@ details.gifts summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(-
 .chip{font-size:.85rem;padding:2px 9px;border-radius:99px;background:var(--gold-soft);color:var(--ink)}
 .gtext{font-size:.95rem;margin:0}
 .chk-row{display:flex;flex-wrap:wrap;gap:4px 16px}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:4px 0 0;overflow-x:auto}
+.tabs button{font:500 1rem "Alegreya Sans",sans-serif;background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);padding:10px 12px 8px;cursor:pointer;white-space:nowrap}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent);font-weight:700}
+.tabs button:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+.pane{padding-top:14px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:10px}
+.field{display:grid;gap:4px;font-size:.85rem;color:var(--muted)}
+.addrow{display:grid;grid-template-columns:1fr 4.5rem auto;gap:8px;align-items:end}
+.addrow input{font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 10px;width:100%;box-sizing:border-box}
+.btn{font:700 .95rem "Alegreya Sans",sans-serif;background:var(--accent);color:var(--accent-ink);border:0;border-radius:10px;padding:10px 14px;cursor:pointer}
+.btn.ghost{background:var(--panel);color:var(--accent);border:1px solid var(--line);font-weight:500}
+.btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.inv{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.inv li{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px dashed var(--line)}
+.inv li:first-child{border-top:0}
+.inv .gname{flex:1;min-width:0}
+.inv .warn{display:block;font-size:.8rem;color:var(--none)}
+.qty{display:flex;align-items:center;gap:2px}
+.qty button,.inv .rm{width:36px;height:36px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:600 1.1rem sans-serif;cursor:pointer}
+.qty output{min-width:2ch;text-align:center;font-variant-numeric:tabular-nums;font-weight:700}
+.plan{display:grid;gap:8px}
+.give{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.give li{display:grid;gap:2px}
+.give .what{font-weight:700}
+.give .alt{font-size:.85rem;color:var(--muted)}
+.rank{font-variant-numeric:tabular-nums;font-size:.8rem;color:var(--muted);flex:none}
+h3.sub2{font:400 1.15rem Marcellus,Georgia,serif;margin:18px 0 6px}
+.codebox{width:100%;box-sizing:border-box;font:13px/1.35 ui-monospace,Menlo,monospace;min-height:64px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);padding:8px;word-break:break-all}
 mark{background:var(--gold-soft);color:inherit;border-radius:3px}
 </style>
 </head>
@@ -97,6 +126,13 @@ mark{background:var(--gold-soft);color:inherit;border-radius:3px}
   <h1>Fortune's Weave Recruits</h1>
   <p class="sub">Recruitment requirements by route, plus the gifts each character really likes. Support = bond level with the character, Renown = renown needed. Really liked gifts give the most support points.</p>
 
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button role="tab" id="tab-recruits" aria-controls="pane-recruits" data-tab="recruits">Recruits</button>
+    <button role="tab" id="tab-plan" aria-controls="pane-plan" data-tab="plan">Gift planner</button>
+    <button role="tab" id="tab-save" aria-controls="pane-save" data-tab="save">Save code</button>
+  </nav>
+
+  <div class="pane" id="pane-recruits" role="tabpanel" aria-labelledby="tab-recruits">
   <div class="bar" role="search" aria-label="Find characters">
     <label for="q" class="sr">Search characters, gifts and requirements</label>
     <input id="q" type="search" placeholder="Search name, gift, item, paralogue…" autocomplete="off">
@@ -140,16 +176,55 @@ mark{background:var(--gold-soft);color:inherit;border-radius:3px}
     <div class="list" id="tslist" hidden></div>
   </section>
 
-  <section class="ts">
-    <h2 class="sec">Save or move your checklist</h2>
-    <p class="sub">Your ticks are saved in this browser only. To move them to another phone or browser, copy the code here and paste it on the other one.</p>
-    <div class="tools">
-      <button id="copyCode">Copy my checklist code</button>
-      <button id="loadCode">Load code from the box</button>
-      <button id="clearAll">Untick everyone</button>
+  </div>
+
+  <section class="pane" id="pane-plan" role="tabpanel" aria-labelledby="tab-plan" hidden>
+    <h2 class="sec">Gift planner</h2>
+    <p class="sub">Add the gifts you're holding. Each gift goes to an unrecruited character on your route who really likes it. The easiest recruits come first: lowest Support level needed, then lowest Renown, then the earliest chapter, working up from there. Tick someone as recruited and the plan moves their gifts to the next person.</p>
+    <div class="panel">
+      <label class="field" for="planRoute">Your route
+        <select id="planRoute"><option>Cai</option><option>Dietrich</option><option>Theodora</option><option>Leda</option></select>
+      </label>
+      <form class="addrow" id="addGift" autocomplete="off">
+        <label class="field" for="giftName">Gift<input id="giftName" list="giftList" placeholder="Start typing, e.g. Garum" required></label>
+        <label class="field" for="giftQty">How many<input id="giftQty" type="number" min="1" max="99" value="1" inputmode="numeric"></label>
+        <button class="btn" type="submit">Add</button>
+      </form>
+      <datalist id="giftList"></datalist>
+      <p class="iomsg" id="addmsg" role="status"></p>
+      <ul class="inv" id="inv" aria-label="Your gifts"></ul>
+      <div class="chk-row">
+        <label class="chk"><input type="checkbox" id="spread"> Spread extra copies to the next person</label>
+      </div>
     </div>
-    <textarea id="io" placeholder="Paste a checklist code here, then tap Load code from the box" aria-label="Checklist code"></textarea>
-    <p class="iomsg" id="iomsg" role="status"></p>
+    <h3 class="sub2">Plan</h3>
+    <div class="plan" id="plan" aria-live="polite"></div>
+  </section>
+
+  <section class="pane" id="pane-save" role="tabpanel" aria-labelledby="tab-save" hidden>
+    <h2 class="sec">Save code</h2>
+    <p class="sub">Everything is saved in this browser only. The code below holds your recruited ticks, your gifts and your route. Copy it, then paste it into this page on another phone or browser to carry everything over. It also works as a backup.</p>
+    <div class="panel">
+      <label class="field" for="myCode">Your code (updates as you make changes)
+        <textarea id="myCode" class="codebox" readonly></textarea>
+      </label>
+      <div class="tools"><button class="btn" id="copyCode">Copy code</button></div>
+      <p class="iomsg" id="copymsg" role="status"></p>
+    </div>
+    <h3 class="sub2">Load a code</h3>
+    <div class="panel">
+      <label class="field" for="io">Paste a code from another device
+        <textarea id="io" class="codebox" placeholder="FEW1-…"></textarea>
+      </label>
+      <div class="tools"><button class="btn" id="loadCode">Load code</button></div>
+      <p class="sub" style="margin:0">Loading replaces the ticks and gifts in this browser with the ones in the code.</p>
+      <p class="iomsg" id="iomsg" role="status"></p>
+    </div>
+    <h3 class="sub2">Start over</h3>
+    <div class="tools">
+      <button class="btn ghost" id="clearAll">Untick everyone</button>
+      <button class="btn ghost" id="clearGifts">Remove all gifts</button>
+    </div>
   </section>
 
   <p class="src">Data from Game8's <a href="https://game8.co/games/Fire-Emblem-Fortunes-Weave/archives/620957">recruitment guide</a> and <a href="https://game8.co/games/Fire-Emblem-Fortunes-Weave/archives/623690">gift guide</a> (marked a work in progress there), pulled 27 Sep 2026.</p>
@@ -158,12 +233,15 @@ mark{background:var(--gold-soft);color:inherit;border-radius:3px}
 <script>
 const DATA = {"units": [{"name": "Eshmel", "paths": {"Cai": {"chapter": 1, "part": 0, "support": null, "renown": null, "cond": ""}, "Dietrich": {"chapter": 1, "part": 0, "support": null, "renown": null, "cond": ""}, "Theodora": {"chapter": 1, "part": 0, "support": null, "renown": null, "cond": ""}, "Leda": {"chapter": 1, "part": 0, "support": null, "renown": null, "cond": ""}}}, {"name": "Hong Hua", "paths": {"Cai": {"chapter": 1, "part": 0, "support": null, "renown": null, "cond": ""}, "Dietrich": {"chapter": 1, "part": 0, "support": null, "renown": null, "cond": ""}, "Theodora": {"chapter": 1, "part": 0, "support": null, "renown": null, "cond": ""}, "Leda": {"chapter": 1, "part": 0, "support": null, "renown": null, "cond": ""}}}, {"name": "Troy", "paths": {"Cai": {"chapter": 2, "part": 0, "support": null, "renown": null, "cond": ""}, "Dietrich": {"chapter": 2, "part": 0, "support": null, "renown": null, "cond": ""}, "Theodora": {"chapter": 2, "part": 0, "support": null, "renown": null, "cond": ""}, "Leda": {"chapter": 2, "part": 0, "support": null, "renown": null, "cond": ""}}}, {"name": "Tialla", "paths": {"Cai": {"chapter": 1, "part": 1, "support": null, "renown": null, "cond": ""}, "Dietrich": {"chapter": 4, "part": 1, "support": 3, "renown": 9, "cond": "Clear Cai's Paralogue then give 3000 gold."}, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 10, "cond": "Clear Cai's Paralogue then give 3000 gold."}, "Leda": {"chapter": 4, "part": 1, "support": 3, "renown": 8, "cond": "Clear Cai's Paralogue then give 3000 gold."}}}, {"name": "Fabio", "paths": {"Cai": null, "Dietrich": {"chapter": 1, "part": 1, "support": null, "renown": null, "cond": ""}, "Theodora": null, "Leda": {"chapter": 4, "part": 1, "support": 3, "renown": 9, "cond": "Clear Dietrich's Paralogue and complete Fabio's request."}}}, {"name": "Bonaventure", "paths": {"Cai": null, "Dietrich": null, "Theodora": {"chapter": 1, "part": 1, "support": null, "renown": null, "cond": ""}, "Leda": null}}, {"name": "Buccar", "paths": {"Cai": null, "Dietrich": {"chapter": 4, "part": 1, "support": 3, "renown": 8, "cond": "Clear Leda's Paralogue"}, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 8, "cond": "Clear Leda's Paralogue"}, "Leda": {"chapter": 1, "part": 1, "support": null, "renown": null, "cond": ""}}}, {"name": "Peter", "paths": {"Cai": {"chapter": 1, "part": 1, "support": null, "renown": null, "cond": ""}, "Dietrich": {"chapter": 4, "part": 1, "support": 3, "renown": 9, "cond": "Give Peter 1 Phantom Ginji"}, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 7, "cond": "Give Peter 1 Phantom Ginji"}, "Leda": {"chapter": 4, "part": 1, "support": 3, "renown": 10, "cond": "Give Peter 1 Phantom Ginji"}}}, {"name": "Esmeralda", "paths": {"Cai": {"chapter": 5, "part": 1, "support": 2, "renown": 7, "cond": "Complete Esmeralda's Request"}, "Dietrich": {"chapter": 2, "part": 1, "support": null, "renown": null, "cond": ""}, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 9, "cond": "Complete Esmeralda's Request"}, "Leda": {"chapter": 4, "part": 1, "support": 3, "renown": 6, "cond": "Complete Esmeralda's Request"}}}, {"name": "Tobias", "paths": {"Cai": null, "Dietrich": null, "Theodora": {"chapter": 1, "part": 1, "support": null, "renown": null, "cond": ""}, "Leda": null}}, {"name": "Sirocco", "paths": {"Cai": {"chapter": 4, "part": 1, "support": 3, "renown": 9, "cond": "Give Sirocco a copy of the Monument Verse"}, "Dietrich": {"chapter": 5, "part": 1, "support": 3, "renown": 9, "cond": "Give Sirocco a copy of the Monument Verse"}, "Theodora": {"chapter": 5, "part": 1, "support": 1, "renown": 5, "cond": "Give Sirocco a copy of the Monument Verse"}, "Leda": {"chapter": 1, "part": 1, "support": null, "renown": null, "cond": ""}}}, {"name": "Ultand", "paths": {"Cai": {"chapter": 6, "part": 1, "support": null, "renown": null, "cond": ""}, "Dietrich": {"chapter": 4, "part": 1, "support": 3, "renown": 5, "cond": "Give Ultand Her Mother's Gift"}, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 6, "cond": "Give Ultand Her Mother's Gift"}, "Leda": {"chapter": 4, "part": 1, "support": 3, "renown": 8, "cond": "Give Ultand Her Mother's Gift"}}}, {"name": "Mikaela", "paths": {"Cai": {"chapter": 5, "part": 1, "support": 3, "renown": 5, "cond": "Give 3000 Gold to Mikaela."}, "Dietrich": {"chapter": 4, "part": 1, "support": null, "renown": null, "cond": ""}, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 8, "cond": "Give 3000 Gold to Mikaela."}, "Leda": {"chapter": 4, "part": 1, "support": 3, "renown": 6, "cond": "Give 3000 Gold to Mikaela."}}}, {"name": "Lysander", "paths": {"Cai": {"chapter": 4, "part": 1, "support": 3, "renown": 8, "cond": "Give 5 Iron Spears to Lysander."}, "Dietrich": {"chapter": 4, "part": 1, "support": 3, "renown": 6, "cond": "Give 5 Iron Spears to Lysander."}, "Theodora": {"chapter": 4, "part": 1, "support": null, "renown": null, "cond": ""}, "Leda": {"chapter": 4, "part": 1, "support": 3, "renown": 7, "cond": "Give 5 Iron Spears to Lysander."}}}, {"name": "Lilian", "paths": {"Cai": {"chapter": 4, "part": 1, "support": 2, "renown": 8, "cond": "Give 5000 Gold to Lilian."}, "Dietrich": {"chapter": 4, "part": 1, "support": 2, "renown": 8, "cond": "Give 5000 Gold to Lilian."}, "Theodora": {"chapter": 4, "part": 1, "support": null, "renown": null, "cond": ""}, "Leda": {"chapter": 4, "part": 1, "support": 2, "renown": 7, "cond": "Give 5000 Gold to Lilian."}}}, {"name": "Mu", "paths": {"Cai": {"chapter": 4, "part": 1, "support": 3, "renown": 9, "cond": "Give Mu 3 Glirmosa"}, "Dietrich": {"chapter": 5, "part": 1, "support": 3, "renown": 7, "cond": "Give Mu 3 Glirmosa"}, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 9, "cond": "Give Mu 3 Glirmosa"}, "Leda": {"chapter": 1, "part": 1, "support": null, "renown": null, "cond": ""}}}, {"name": "Olympia", "paths": {"Cai": {"chapter": 4, "part": 1, "support": 3, "renown": 8, "cond": "Give Olympia Scarlet Drops"}, "Dietrich": {"chapter": 5, "part": 1, "support": 3, "renown": 6, "cond": "Give Olympia Scarlet Drops"}, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 9, "cond": "Give Olympia Scarlet Drops"}, "Leda": {"chapter": 3, "part": 1, "support": null, "renown": null, "cond": ""}}}, {"name": "Gaitz", "paths": {"Cai": null, "Dietrich": {"chapter": 4, "part": 1, "support": 3, "renown": 10, "cond": "Clear Bertrand's Paralogue and reach Chapter 12."}, "Theodora": null, "Leda": null}}, {"name": "Ursula", "paths": {"Cai": {"chapter": 4, "part": 1, "support": 3, "renown": 10, "cond": "Complete Talimun's Paralogue then select Agree 3 times"}, "Dietrich": {"chapter": 4, "part": 1, "support": 3, "renown": 7, "cond": "Complete Talimun's Paralogue then select Agree 3 times"}, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 9, "cond": "Complete Talimun's Paralogue then select Agree 3 times"}, "Leda": null}}, {"name": "Diego", "paths": {"Cai": {"chapter": 3, "part": 1, "support": 3, "renown": 10, "cond": "Clear Orchel's Regret Paralogue"}, "Dietrich": {"chapter": 4, "part": 1, "support": 3, "renown": 9, "cond": "Clear Orchel's Regret Paralogue"}, "Theodora": {"chapter": 5, "part": 1, "support": 2, "renown": 8, "cond": "Clear Orchel's Regret Paralogue"}, "Leda": {"chapter": 4, "part": 1, "support": 3, "renown": 8, "cond": "Clear Orchel's Regret Paralogue"}}}, {"name": "Sha Lan", "paths": {"Cai": null, "Dietrich": {"chapter": 4, "part": 1, "support": 3, "renown": 10, "cond": "Clear Anatolia's Paralogue and answer questions correctly."}, "Theodora": null, "Leda": {"chapter": 4, "part": 1, "support": 3, "renown": 8, "cond": "Clear Anatolia's Paralogue and answer questions correctly."}}}, {"name": "Dante", "paths": {"Cai": {"chapter": 5, "part": 1, "support": 3, "renown": 10, "cond": "Give 8000 Gold to Dante."}, "Dietrich": {"chapter": 4, "part": 1, "support": 2, "renown": 8, "cond": "Give 8000 Gold to Dante."}, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 6, "cond": "Give 8000 Gold to Dante."}, "Leda": {"chapter": 4, "part": 1, "support": 3, "renown": 10, "cond": "Give 8000 Gold to Dante."}}}, {"name": "Simon", "paths": {"Cai": {"chapter": 5, "part": 1, "support": 3, "renown": 8, "cond": "Pay 500 Gold and pick tails on coin toss."}, "Dietrich": {"chapter": 4, "part": 1, "support": 3, "renown": 7, "cond": "Pay 500 Gold and pick tails on coin toss."}, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 7, "cond": "Pay 500 Gold and pick tails on coin toss."}, "Leda": {"chapter": 4, "part": 1, "support": 3, "renown": 6, "cond": "Pay 500 Gold and pick tails on coin toss."}}}, {"name": "Ninae", "paths": {"Cai": {"chapter": 3, "part": 1, "support": 3, "renown": 6, "cond": "Give 1 Paradise Fish to Ninae."}, "Dietrich": {"chapter": 4, "part": 1, "support": 3, "renown": 8, "cond": "Give 1 Paradise Fish to Ninae."}, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 6, "cond": "Give 1 Paradise Fish to Ninae."}, "Leda": {"chapter": 4, "part": 1, "support": 3, "renown": 8, "cond": "Give 1 Paradise Fish to Ninae."}}}, {"name": "Nezha", "paths": {"Cai": {"chapter": 5, "part": 1, "support": 3, "renown": 6, "cond": "Give 3 Sandworm Meat to Nezha."}, "Dietrich": {"chapter": 4, "part": 1, "support": 3, "renown": 10, "cond": "Give 3 Sandworm Meat to Nezha."}, "Theodora": {"chapter": 5, "part": 1, "support": 2, "renown": 6, "cond": "Give 3 Sandworm Meat to Nezha."}, "Leda": {"chapter": 4, "part": 1, "support": 3, "renown": 9, "cond": "Give 3 Sandworm Meat to Nezha."}}}, {"name": "Guzran", "paths": {"Cai": {"chapter": 3, "part": 1, "support": 1, "renown": 2, "cond": ""}, "Dietrich": {"chapter": 4, "part": 1, "support": 3, "renown": 8, "cond": ""}, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 8, "cond": ""}, "Leda": {"chapter": 4, "part": 1, "support": 1, "renown": 3, "cond": ""}}}, {"name": "Nydine", "paths": {"Cai": {"chapter": 3, "part": 1, "support": 1, "renown": 6, "cond": "Give 2 Bronze Axes to Nydine."}, "Dietrich": {"chapter": 4, "part": 1, "support": 2, "renown": 5, "cond": "Give 2 Bronze Axes to Nydine."}, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 5, "cond": "Give 3 Iron Axes to Nydine."}, "Leda": {"chapter": 4, "part": 1, "support": 3, "renown": 10, "cond": "Give 3 Iron Axes to Nydine."}}}, {"name": "Io", "paths": {"Cai": {"chapter": 3, "part": 1, "support": 3, "renown": 10, "cond": "Give 4000 Gold to Io."}, "Dietrich": {"chapter": 4, "part": 1, "support": 2, "renown": 3, "cond": "Give 800 Gold to Io."}, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 10, "cond": "Give 4000 Gold to Io."}, "Leda": {"chapter": 4, "part": 1, "support": 1, "renown": 6, "cond": "Give 1500 Gold to Io."}}}, {"name": "Catania", "paths": {"Cai": {"chapter": 3, "part": 1, "support": 3, "renown": 10, "cond": ""}, "Dietrich": {"chapter": 4, "part": 1, "support": 1, "renown": 8, "cond": ""}, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 7, "cond": ""}, "Leda": {"chapter": 4, "part": 1, "support": 1, "renown": 2, "cond": ""}}}, {"name": "Benditz", "paths": {"Cai": {"chapter": 6, "part": 1, "support": 3, "renown": 9, "cond": ""}, "Dietrich": {"chapter": 5, "part": 1, "support": 2, "renown": 7, "cond": ""}, "Theodora": {"chapter": 6, "part": 1, "support": 1, "renown": 8, "cond": ""}, "Leda": {"chapter": 5, "part": 1, "support": 3, "renown": 7, "cond": ""}}}, {"name": "Alexandra", "paths": {"Cai": {"chapter": 7, "part": 1, "support": 2, "renown": 7, "cond": ""}, "Dietrich": {"chapter": 7, "part": 1, "support": 3, "renown": 8, "cond": ""}, "Theodora": {"chapter": 8, "part": 1, "support": 1, "renown": 6, "cond": ""}, "Leda": {"chapter": 7, "part": 1, "support": 3, "renown": 10, "cond": ""}}}, {"name": "Noctula", "paths": {"Cai": {"chapter": 3, "part": 1, "support": 1, "renown": 4, "cond": ""}, "Dietrich": {"chapter": 4, "part": 1, "support": 1, "renown": 6, "cond": ""}, "Theodora": {"chapter": 5, "part": 1, "support": 1, "renown": 3, "cond": ""}, "Leda": {"chapter": 4, "part": 1, "support": 3, "renown": 8, "cond": ""}}}, {"name": "Yang Jie", "paths": {"Cai": {"chapter": 3, "part": 1, "support": 2, "renown": 3, "cond": "Answer Yang Jie\u2019s 3 Questions Correctly."}, "Dietrich": {"chapter": 4, "part": 1, "support": 1, "renown": 2, "cond": ""}, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 9, "cond": "Answer Yang Jie\u2019s 3 Questions Correctly."}, "Leda": {"chapter": 4, "part": 1, "support": 3, "renown": 8, "cond": "Answer Yang Jie\u2019s 3 Questions Correctly."}}}, {"name": "Sofia", "paths": {"Cai": {"chapter": 3, "part": 1, "support": 3, "renown": 9, "cond": ""}, "Dietrich": {"chapter": 4, "part": 1, "support": 3, "renown": 9, "cond": ""}, "Theodora": {"chapter": 5, "part": 1, "support": 1, "renown": 2, "cond": ""}, "Leda": {"chapter": 4, "part": 1, "support": 3, "renown": 7, "cond": ""}}}, {"name": "Nuzzuo", "paths": {"Cai": {"chapter": 6, "part": 1, "support": 2, "renown": 6, "cond": "Give 3 Iron Bows to Nuzzuo."}, "Dietrich": {"chapter": 8, "part": 1, "support": 1, "renown": 9, "cond": "Give 2 Iron Bows to Nuzzuo."}, "Theodora": {"chapter": 9, "part": 1, "support": 1, "renown": 6, "cond": "Give 3 Iron Bows to Nuzzuo."}, "Leda": {"chapter": 8, "part": 1, "support": 3, "renown": 9, "cond": "Give 3 Iron Bows to Nuzzuo."}}}, {"name": "Majide", "paths": {"Cai": {"chapter": 5, "part": 1, "support": 2, "renown": 5, "cond": "Admit That You Need Majide Three Times."}, "Dietrich": {"chapter": 4, "part": 1, "support": 3, "renown": 8, "cond": "Admit That You Need Majide Three Times."}, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 8, "cond": "Admit That You Need Majide Three Times."}, "Leda": {"chapter": 4, "part": 1, "support": 3, "renown": 9, "cond": "Admit That You Need Majide Three Times."}}}, {"name": "Zarcone", "paths": {"Cai": {"chapter": 5, "part": 1, "support": 3, "renown": 8, "cond": "Refuse to pay thrice then pay Zarcone 10 Gold."}, "Dietrich": {"chapter": 4, "part": 1, "support": 3, "renown": 7, "cond": "Refuse to pay thrice then pay Zarcone 10 Gold."}, "Theodora": {"chapter": 5, "part": 1, "support": 1, "renown": 4, "cond": "Refuse to pay thrice then pay Zarcone 10 Gold."}, "Leda": {"chapter": 4, "part": 1, "support": 2, "renown": 5, "cond": "Refuse to pay thrice then pay Zarcone 10 Gold."}}}, {"name": "Goliath", "paths": {"Cai": {"chapter": 4, "part": 1, "support": 3, "renown": 7, "cond": "Give 3 Giants' Meat to Goliath."}, "Dietrich": {"chapter": 4, "part": 1, "support": 3, "renown": 6, "cond": "Give 3 Giants' Meat to Goliath."}, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 9, "cond": "Give 3 Giants' Meat to Goliath."}, "Leda": {"chapter": 4, "part": 1, "support": 3, "renown": 10, "cond": "Give 3 Giants' Meat to Goliath."}}}, {"name": "Jester", "paths": {"Cai": {"chapter": 4, "part": 1, "support": 3, "renown": 10, "cond": "Complete Jester's Three Combat Quests."}, "Dietrich": {"chapter": 4, "part": 1, "support": 3, "renown": 6, "cond": "Complete Jester's Three Combat Quests."}, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 9, "cond": "Complete Jester's Three Combat Quests."}, "Leda": {"chapter": 4, "part": 1, "support": 3, "renown": 10, "cond": "Complete Jester's Three Combat Quests."}}}, {"name": "Ludia", "paths": {"Cai": {"chapter": 4, "part": 1, "support": 3, "renown": 9, "cond": "Gather information at Callianeira Port and report back to Ludia"}, "Dietrich": {"chapter": 4, "part": 1, "support": 3, "renown": 9, "cond": "Gather information at Callianeira Port and report back to Ludia"}, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 7, "cond": "Gather information at Callianeira Port and report back to Ludia"}, "Leda": {"chapter": 4, "part": 1, "support": 3, "renown": 7, "cond": "Gather information at Callianeira Port and report back to Ludia"}}}, {"name": "Seteth", "paths": {"Cai": {"chapter": 3, "part": 1, "support": 3, "renown": 6, "cond": "Complete Seteth's Request."}, "Dietrich": null, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 6, "cond": "Complete Seteth's Request."}, "Leda": {"chapter": 4, "part": 1, "support": 3, "renown": 10, "cond": "Complete Seteth's Request."}}}, {"name": "Kiroc", "paths": {"Cai": {"chapter": 6, "part": 1, "support": 3, "renown": 8, "cond": "Give 8 Pure Water to Kiroc."}, "Dietrich": {"chapter": 6, "part": 1, "support": 1, "renown": 4, "cond": "Give 3 Pure Water to Kiroc."}, "Theodora": {"chapter": 7, "part": 1, "support": 3, "renown": 10, "cond": "Give 8 Pure Water to Kiroc."}, "Leda": {"chapter": 5, "part": 1, "support": 1, "renown": 4, "cond": "Give 3 Pure Water to Kiroc."}}}, {"name": "Fianna", "paths": {"Cai": {"chapter": 4, "part": 1, "support": 3, "renown": 8, "cond": "Give 3000 Gold to Fianna."}, "Dietrich": {"chapter": 4, "part": 1, "support": 3, "renown": 7, "cond": "Give 3000 Gold to Fianna."}, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 9, "cond": "Give 3000 Gold to Fianna."}, "Leda": {"chapter": 5, "part": 1, "support": 3, "renown": 5, "cond": "Give 3000 Gold to Fianna."}}}, {"name": "Loretta", "paths": {"Cai": {"chapter": 3, "part": 1, "support": 3, "renown": 7, "cond": "Give 3 Iron Swords to Loretta."}, "Dietrich": {"chapter": 4, "part": 1, "support": 3, "renown": 9, "cond": "Give 3 Iron Swords to Loretta."}, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 5, "cond": "Give 3 Iron Swords to Loretta."}, "Leda": {"chapter": 4, "part": 1, "support": 3, "renown": 5, "cond": "Give 3 Iron Swords to Loretta."}}}, {"name": "Halvin", "paths": {"Cai": {"chapter": 5, "part": 1, "support": 3, "renown": 5, "cond": "Give 10 Dates (Material) to Halvin."}, "Dietrich": {"chapter": 4, "part": 1, "support": 3, "renown": 9, "cond": "Give 10 Dates (Material) to Halvin."}, "Theodora": {"chapter": 5, "part": 1, "support": 3, "renown": 7, "cond": "Give 10 Dates (Material) to Halvin."}, "Leda": {"chapter": 4, "part": 1, "support": 3, "renown": 7, "cond": "Give 10 Dates (Material) to Halvin."}}}, {"name": "Dadao", "paths": {"Cai": {"chapter": 5, "part": 1, "support": 3, "renown": 7, "cond": "Give 2 Kothar Gar to Dadao."}, "Dietrich": {"chapter": 4, "part": 1, "support": 3, "renown": 10, "cond": "Give 2 Kothar Gar to Dadao."}, "Theodora": {"chapter": 5, "part": 1, "support": 2, "renown": 5, "cond": "Give 2 Kothar Gar to Dadao."}, "Leda": {"chapter": 4, "part": 1, "support": 2, "renown": 5, "cond": "Give 2 Kothar Gar to Dadao."}}}, {"name": "Jasmine", "paths": {"Cai": {"chapter": 6, "part": 1, "support": 1, "renown": 8, "cond": "Give 2000 Gold to Jasmine."}, "Dietrich": {"chapter": 6, "part": 1, "support": 3, "renown": 9, "cond": "Give 5000 Gold to Jasmine."}, "Theodora": {"chapter": 7, "part": 1, "support": 3, "renown": 8, "cond": "Give 5000 Gold to Jasmine."}, "Leda": {"chapter": 6, "part": 1, "support": 2, "renown": 4, "cond": "Give 500 Gold to Jasmine."}}}, {"name": "Peppe", "paths": {"Cai": {"chapter": 3, "part": 1, "support": 1, "renown": 9, "cond": "Clear Bertrand's Paralogue."}, "Dietrich": {"chapter": 4, "part": 1, "support": 3, "renown": 8, "cond": "Clear Bertrand's Paralogue."}, "Theodora": {"chapter": 5, "part": 1, "support": 2, "renown": 7, "cond": "Clear Bertrand's Paralogue."}, "Leda": null}}, {"name": "Inyoni", "paths": {"Cai": {"chapter": 8, "part": 1, "support": 3, "renown": 8, "cond": "Give 6000 Gold to Inyoni."}, "Dietrich": {"chapter": 8, "part": 1, "support": 3, "renown": 8, "cond": "Give 6000 Gold to Inyoni."}, "Theodora": {"chapter": 9, "part": 1, "support": 1, "renown": 9, "cond": "Give 4000 Gold to Inyoni."}, "Leda": {"chapter": 9, "part": 1, "support": 1, "renown": 7, "cond": "Give 3000 Gold to Inyoni."}}}], "timeskip": [{"name": "Creek", "when": "Part 2 Chapter 2", "cond": "Clear My Late Sister's Accessory Subquest then defeat during the chapter."}, {"name": "Nathan", "when": "Part 2 Chapter 3", "cond": "Defeat with Creek."}, {"name": "Bertrand", "when": "Part 3 First Section", "cond": "Automatically joins if Bertrand's Paralogue is cleared."}, {"name": "Talimun", "when": "Part 3 First Section", "cond": "Automatically joins if Talimun's Paralogue is cleared."}, {"name": "Anatolia", "when": "Part 3 First Section", "cond": "Automatically joins if Anatolia's Paralogue is cleared."}, {"name": "Orchel", "when": "Part 3 First Section", "cond": "Automatically joins if Orchel's Paralogue is cleared."}, {"name": "Centurio", "when": "Part 3 Second Section", "cond": "Clear Rescue Centurio Subquest then talk in Dagsion to recruit."}, {"name": "Aswan", "when": "Part 3 Fifth Section", "cond": "Joins automatically if survived in Part 2."}, {"name": "Tahonia", "when": "Part 3 Fifth Section", "cond": "Joins automatically if survived in Part 2."}, {"name": "Klapka", "when": "Part 3 Sixth Section", "cond": "Joins automatically if he survived the Fifth Section.   (Unconfirmed) Theodora's Path must be cleared."}], "gifts": {"Cai": {"really": ["Arrowhead Gem", "Crimson Ghosh", "Sharp Fishhook"], "likes": "Physical training, catching animals", "interests": "Fishing, spear training"}, "Dietrich": {"really": ["Arrowhead Gem", "Board-Game Tactics", "Crimson Ghosh", "Ginji Cervi", "Honey Milk", "Honey Pastries", "Joint-Relief Gloves", "Kitten Figurine", "Pastry Cookbook", "Protection Figurine", "Pure-White Cervi", "Spirit Board Game", "Training Pillar", "Training Weights"], "likes": "Objects of beauty, sweet things, his little sister", "interests": "Fighting the strong, meditating"}, "Theodora": {"really": ["Dagda Beard Grass", "Eastern Black Silk", "Eastern Tea Leaves", "Horse-Grooming Kit"], "likes": "Fighting, seeing the people of Saramis thrive", "interests": "Hunting, combat training"}, "Leda": {"really": ["Aromatic Shosh", "Brined Fish Guts", "Dagda Beard Grass", "Eastern Tea Leaves", "Gaudy Bangle", "Horse-Grooming Kit", "Huge Fish Eyeball", "Jade Ghosh", "Kitten Figurine", "Light Shosh", "Magic-Trick Set", "Mature Ghosh", "Mature Shosh", "Pack of Pastels", "Rustic Ghosh", "Secret Ghosh", "Southern Ghosh", "Sun Ghosh", "Training Bracelet", "Young Ghosh"], "likes": "Memories of her parents, songs from home, gemstones, applause", "interests": "Tuning her vihuela, taking long horseback rides"}, "Tialla": {"really": ["Alecto Garum", "Eastern Love Story", "Eastern Tea Leaves", "Garum", "Ginji Cervi", "Herbal Recipe Guide", "Home-Recipe Book", "Jamel Milk", "Mature Dried Cervi", "Pastry Cookbook", "Pickled Bulbs", "Smooth Garum", "Strategy Manuscript", "Strong Cervi", "Strong Seasonings", "Tales of Adventure", "Trader's Handbook", "Village Recipes", "Weak Cervi", "Yarc Milk"], "likes": "Libraries, gossiping about love, alone time, her grandfather", "interests": "Reading, playing board games"}, "Fabio": {"really": ["Aromatic Shosh", "Brined Fish Guts", "Coffee Pastries", "Common Coffee", "Dagda Beard Grass", "Eastern Black Silk", "Eastern Tea Leaves", "Huge Fish Eyeball", "Jade Ghosh", "Light Shosh", "Mature Ghosh", "Mature Shosh", "Orgus Coffee", "Pack of Pastels", "Potted Vegetables", "Rustic Ghosh", "Secret Ghosh", "Select Coffee", "Southern Coffee", "Southern Ghosh", "Sun Ghosh", "Young Ghosh"], "likes": "Suffering, half-forgotten feelings, dissecting beautiful things", "interests": "Drawing, conversing with thoughtful people"}, "Bonaventure": {"really": ["Ceremonial Spear", "Eastern Black Silk", "Jade Ghosh", "Pastry Cookbook", "Rare Spices", "Secret Ghosh", "Strong Seasonings", "Sun Ghosh", "Tales of the Arena", "The Works of Dante", "Thick Foreign Tome", "Village Recipes"], "likes": "Knowledge, dialogue with sages, learning about other countries", "interests": "Cooking, reciting poetry"}, "Buccar": {"really": ["Arrowhead Gem", "Light Shosh", "Mature Ghosh", "Mature Shosh", "Niiza Garum", "Outdoor Cooking Set", "Rare Spices", "Rustic Ghosh", "Village Recipes", "Volcano Ghosh", "Young Ghosh", "Young Shosh"], "likes": "Loyalty, training, dreaming about Leda's happiness", "interests": "Cooking, mentoring young people"}, "Peter": {"really": ["Coffee Pastries", "Dagda Beard Grass", "Eastern Tea Leaves", "Fragrant Pastries", "Ginji Cervi", "Jamel Milk", "Kitten Figurine", "Mature Dried Cervi", "Mellow Pastries", "Pastry Cookbook", "Saraminian Sweets", "Simple Pastries", "Strong Cervi", "Weak Cervi", "Wing Fletching", "Yarc Milk"], "likes": "His mother's home cooking, ginji fruits", "interests": "Eating, watching clouds"}, "Esmeralda": {"really": ["Alecto Garum", "Coffee Pastries", "Dagda Beard Grass", "Eastern Tea Leaves", "Flexible Fishing Rod", "Fragrant Pastries", "Garum", "Gaudy Bangle", "Herbal Recipe Guide", "Home-Recipe Book", "Horse-Grooming Kit", "Huge Fish Eyeball", "Kitten Figurine", "Mellow Pastries", "Pastry Cookbook", "Saraminian Sweets", "Sharp Fishhook", "Simple Pastries", "Smooth Garum", "Strong Seasonings", "Training Bracelet", "Village Recipes"], "likes": "Handsome men, throwing her trident, maintaining fishing gear", "interests": "Fishing, carving wooden dolls"}, "Tobias": {"really": ["Alecto Garum", "Dagda Beard Grass", "Eastern Black Silk", "Eastern Tea Leaves", "Garum", "Herbal Recipe Guide", "Home-Recipe Book", "Horse-Grooming Kit", "Huge Fish Eyeball", "Jade Ghosh", "Kitten Figurine", "Mature Ghosh", "Mature Shosh", "Pastry Cookbook", "Rustic Ghosh", "Secret Ghosh", "Sharp Fishhook", "Smooth Garum", "Southern Ghosh", "Strong Seasonings", "Sturdy Rucksack", "Sun Ghosh", "Training Bracelet", "Village Recipes", "Wing Fletching", "Young Ghosh"], "likes": "Singing, interacting with others", "interests": "Hunting, solitary camping"}, "Sirocco": {"really": ["Eastern Love Story", "Joint-Relief Gloves", "Light Shosh", "Mature Ghosh", "Mature Shosh", "Pack of Pastels", "Rustic Ghosh", "Skin Balm", "Young Ghosh", "Young Shosh"], "likes": "The goddess Kalla, all women, reciting poetry", "interests": "Reading, drawing portraits"}, "Ultand": {"really": ["Blue-Rose Bouquet", "Crimson Ghosh", "Eastern Love Story", "Garum", "Outdoor Cooking Set", "Pastry Cookbook"], "likes": "Looking after others, her family, housekeeping, love stories", "interests": "Saving money, wandering around marketplaces"}, "Mikaela": {"really": ["Alecto Garum", "Aromatic Shosh", "Common Coffee", "Eastern Tea Leaves", "Garum", "Herbal Recipe Guide", "Home-Recipe Book", "Huge Fish Eyeball", "Jade Ghosh", "Light Shosh", "Mature Ghosh", "Mature Shosh", "Orgus Coffee", "Pastry Cookbook", "Rare Spices", "Rustic Ghosh", "Secret Ghosh", "Select Coffee", "Southern Coffee", "Southern Ghosh", "Strong Seasonings", "Sun Ghosh", "Village Recipes", "Wing Fletching", "Young Ghosh"], "likes": "Moving her body, looking after others", "interests": "Cooking, baking, brewing coffee"}, "Lysander": {"really": ["Dagda Beard Grass", "Eastern Tea Leaves", "Horse-Grooming Kit", "Mane Ornament", "Wing Fletching"], "likes": "Skygazing, dining with women", "interests": "Crafting throwing sticks, going on long rides"}, "Lilian": {"really": ["Gaudy Bangle", "Herbal Recipe Guide", "Home-Recipe Book", "Pastry Cookbook", "Strong Seasonings", "Trader's Handbook", "Training Bracelet", "Village Recipes", "Wing Fletching"], "likes": "Gold coins, gemstones, older men", "interests": "Being frugal, hunting"}, "Mu": {"really": ["Arrowhead Gem", "Candy Crystals", "Honey Pastries", "Jamel Milk", "Outdoor Cooking Set", "Pickled Vegetables", "Pure-White Cervi", "Weak Cervi", "Yarc Milk"], "likes": "Concocting new medicines, her father, her mother, eating sweets", "interests": "Making medicinal elixirs, exercise"}, "Olympia": {"really": ["Coffee Pastries", "Common Coffee", "Gaudy Bangle", "Select Coffee", "Skin Balm", "Southern Coffee"], "likes": "Song, dance, playing instruments, writing songs, attracting attention", "interests": "Caring for her instruments, studying music and dance"}, "Eshmel": {"really": [], "likes": "Ambitious people, people of great talent, small and unnamed flowers", "interests": "Playing board games"}, "Hong Hua": {"really": [], "likes": "Memories of happier times", "interests": "None"}, "Troy": {"really": [], "likes": "Her kin, natural scenes", "interests": "Maintaining her weapons"}, "Gaitz": {"really": ["Arrowhead Gem", "Common Coffee", "Crimson Ghosh", "Horse-Grooming Kit", "Joint-Relief Gloves", "Orgus Coffee", "Training Pillar", "Training Weights"], "likes": "Tea from Sai, Ferghanan horses, dueling, calligraphy", "interests": "Brewing tea, practicing martial arts"}, "Ursula": {"really": ["Arrowhead Gem", "Common Coffee", "Crimson Ghosh", "Eastern Love Story", "Kitten Figurine", "Mane Ornament", "Pack of Pastels"], "likes": "Poetry, animals, flowers in the shade, counting money", "interests": "Reading, drawing pictures"}, "Diego": {"really": ["Crimson Ghosh", "Joint-Relief Gloves", "Protection Figurine", "Training Pillar", "Training Weights"], "likes": "Walking in the forest, foraging medicinal herbs, Orchel", "interests": "Playing the flute, being devoted to Orchel"}, "Sha Lan": {"really": ["Common Coffee", "Energizing Ghosh", "Niiza Garum", "Outdoor Cooking Set", "Pastry Cookbook", "Select Coffee"], "likes": "Delicious food, drinks, socializing", "interests": "Caring for Anatolia, studying"}, "Dante": {"really": ["Arrowhead Gem", "Common Coffee", "Crimson Ghosh", "Magic-Trick Set", "Pack of Pastels", "Select Coffee", "The Works of Dante"], "likes": "Herself, writing quickly, searching for dramatic subjects", "interests": "Studying people for research, seeing how others act"}, "Simon": {"really": ["Crimson Ghosh", "Dual Fish Knives", "Protection Figurine"], "likes": "Fighting to the death, food from his hometown, womanizing", "interests": "Carving wooden figures, making preserves"}, "Ninae": {"really": ["Arrowhead Gem", "Crimson Ghosh", "Eastern Black Silk", "Eastern Tea Leaves"], "likes": "Pitiable people, talking to spirits, her keepsake necklace, skygazing", "interests": "Daydreaming, training"}, "Nezha": {"really": ["Eastern Tea Leaves", "Pickled Bulbs", "Sturdy Rucksack", "Training Bracelet", "Wing Fletching"], "likes": "Physical activity, justice, fighting, good food", "interests": "Combat training, eating large amounts of food"}, "Guzran": {"really": ["Aromatic Shosh", "Common Coffee", "Eastern Tea Leaves", "Huge Fish Eyeball", "Jade Ghosh", "Light Shosh", "Mature Ghosh", "Mature Shosh", "Orgus Coffee", "Rustic Ghosh", "Secret Ghosh", "Select Coffee", "Southern Coffee", "Southern Ghosh", "Strong Seasonings", "Sun Ghosh", "Wing Fletching", "Young Ghosh", "Young Shosh"], "likes": "Booze, women, interesting people, young greenhorns", "interests": "Boasting"}, "Nydine": {"really": ["Eastern Love Story", "Eastern Tea Leaves", "Kitten Figurine", "Sturdy Rucksack", "Training Bracelet", "Training Weights", "Wing Fletching"], "likes": "Honoring her duties, caring for orniuses", "interests": "Improving her combat abilities, reading"}, "Io": {"really": ["Arrowhead Gem", "Board-Game Tactics", "Common Coffee", "Crimson Ghosh", "Horse-Grooming Kit", "Joint-Relief Gloves", "Kitten Figurine", "Mane Ornament", "Protection Figurine", "Spirit Board Game", "Sturdy Rucksack", "Training Pillar", "Training Weights"], "likes": "Chivalry, self-discipline, his beloved horse Rocinan", "interests": "Caring for his faithful steed, being quiet"}, "Catania": {"really": ["Coffee Pastries", "Common Coffee", "Dagda Beard Grass", "Gaudy Bangle", "Horse-Grooming Kit", "Kitten Figurine", "Magic-Trick Set", "Orgus Coffee", "Pack of Pastels", "Select Coffee", "Southern Coffee"], "likes": "Sterling wares, sterling people, sterling meals", "interests": "Gathering information, making a name for herself"}, "Benditz": {"really": ["Coffee Pastries", "Common Coffee", "Eastern Love Story", "Gaudy Bangle", "Orgus Coffee", "Select Coffee", "Southern Coffee", "Wing Fletching"], "likes": "The Great August's tactics, up-and-coming young people", "interests": "Lecturing young people, reading"}, "Alexandra": {"really": ["Alecto Garum", "Dagda Beard Grass", "Garum", "Gaudy Bangle", "Herbal Recipe Guide", "Home-Recipe Book", "Horse-Grooming Kit", "Kitten Figurine", "Mane Ornament", "Pastry Cookbook", "Smooth Garum", "Strong Seasonings", "Sturdy Rucksack", "Training Bracelet", "Village Recipes", "Wing Fletching"], "likes": "Her parents, Bucephalus, virtuous men, talking about love", "interests": "Combat training, caring for her beloved steed"}, "Noctula": {"really": ["Eastern Tea Leaves", "Protection Figurine", "Sturdy Rucksack", "Training Bracelet", "Wing Fletching"], "likes": "The city and its people, brawling", "interests": "Sightseeing in the city, training"}, "Yang Jie": {"really": ["Aromatic Shosh", "Coffee Pastries", "Common Coffee", "Flexible Fishing Rod", "Herbal Recipe Guide", "Home-Recipe Book", "Huge Fish Eyeball", "Jade Ghosh", "Kitten Figurine", "Light Shosh", "Mature Ghosh", "Mature Shosh", "Orgus Coffee", "Pastry Cookbook", "Rustic Ghosh", "Secret Ghosh", "Select Coffee", "Sharp Fishhook", "Southern Coffee", "Southern Ghosh", "Sun Ghosh", "The Works of Dante", "Trader's Handbook", "Village Recipes", "Young Ghosh"], "likes": "Alcohol, tales of old, distant journeys, saving the weak", "interests": "Collecting liquors, giving sermons"}, "Sofia": {"really": ["Arrowhead Gem", "Common Coffee", "Crimson Ghosh", "Ginji Cervi", "Honey Milk", "Honey Pastries", "Jamel Milk", "Kitten Figurine", "Magic-Trick Set", "Niiza Garum", "Outdoor Cooking Set", "Pack of Pastels", "Pastry Cookbook", "Pickled Vegetables", "Protection Figurine", "Pure-White Cervi", "Sharp Fishhook", "Yarc Milk"], "likes": "Delicious food, the moment when food is served (and soon vanishes)", "interests": "Proselytizing about Solel, eating her fill"}, "Nuzzuo": {"really": ["Common Coffee", "Crimson Ghosh", "Joint-Relief Gloves", "Kitten Figurine", "Niiza Garum", "Outdoor Cooking Set", "Pickled Vegetables", "Protection Figurine", "Select Coffee", "Sturdy Rucksack", "Training Bracelet", "Training Pillar", "Training Weights"], "likes": "Tradition, honor, great power", "interests": "Conversing with forest spirits"}, "Majide": {"really": ["Crimson Ghosh", "Dual Fish Knives", "Joint-Relief Gloves", "Light Shosh", "Mature Ghosh", "Mature Shosh", "Rustic Ghosh", "Training Pillar", "Training Weights", "Volcano Ghosh", "Young Ghosh", "Young Shosh"], "likes": "Booze, women, fighting, being strong", "interests": "Fighting with annoying people"}, "Zarcone": {"really": ["Eastern Earrings", "Gaudy Bangle", "Pickled Bulbs", "Potted Vegetables", "Strategy Manuscript", "Tales of Adventure", "Wing Fletching"], "likes": "Money, violence, good women, vegetables, drinking with friends", "interests": "Tormenting the weak, pillaging"}, "Goliath": {"really": ["Aromatic Shosh", "Eastern Tea Leaves", "Jade Ghosh", "Light Shosh", "Mature Ghosh", "Mature Shosh", "Rustic Ghosh", "Secret Ghosh", "Southern Ghosh", "Sturdy Rucksack", "Sun Ghosh", "Training Bracelet", "Wing Fletching", "Young Ghosh"], "likes": "Rampaging, food, animals, smoking meat", "interests": "Training, competing as a gladiator"}, "Jester": {"really": ["Board-Game Tactics", "Crimson Ghosh", "Dual Fish Knives", "Joint-Relief Gloves", "Spirit Board Game"], "likes": "The White-Maned Demon, seeing fear in his opponents' faces", "interests": "Slicing opponents into pieces, terrifying audiences"}, "Ludia": {"really": ["Coffee Pastries", "Common Coffee", "Everyday Scenes", "Gaudy Bangle", "Herbal Recipe Guide", "Home-Recipe Book", "Magic-Trick Set", "Orgus Coffee", "Pastry Cookbook", "Select Coffee", "Sharp Fishhook", "Skin Balm", "Southern Coffee", "Sturdy Rucksack", "Trader's Handbook", "Training Bracelet", "Village Recipes"], "likes": "Writing stories, appreciating art, talking about love and romance", "interests": "Reading adventure stories, going shopping"}, "Seteth": {"really": ["Common Coffee", "Eastern Tea Leaves", "Flexible Fishing Rod", "Herbal Recipe Guide", "Home-Recipe Book", "Huge Fish Eyeball", "Orgus Coffee", "Pastry Cookbook", "Select Coffee", "Sharp Fishhook", "Southern Coffee", "Sturdy Rucksack", "Trader's Handbook", "Village Recipes"], "likes": "The teachings of Seiros, fishing, his daughter, hardworking people", "interests": "Writing fables, preaching, teaching"}, "Kiroc": {"really": ["Arrowhead Gem", "Common Coffee", "Joint-Relief Gloves", "Light Shosh", "Mature Ghosh", "Mature Shosh", "Rustic Ghosh", "Select Coffee", "Sharp Fishhook", "Southern Coffee", "Training Pillar", "Training Weights", "Young Ghosh", "Young Shosh"], "likes": "Thievery, the open sea, ships, obedient underlings", "interests": "Riding on ships, pirating"}, "Fianna": {"really": ["Common Coffee", "Crimson Ghosh", "Joint-Relief Gloves", "Rare Spices", "Select Coffee", "Skin Balm", "Southern Coffee"], "likes": "Books of poetry, spicy foods, coffee, trustworthy people", "interests": "Praying, going to the theater"}, "Loretta": {"really": ["Arrowhead Gem", "Crimson Ghosh", "Honey Milk", "Honey Pastries", "Joint-Relief Gloves", "Mellow Pastries", "Pastry Cookbook", "Pure-White Cervi", "Training Pillar", "Training Weights"], "likes": "Reliable people, sweets, her friends", "interests": "Sword training, fishing"}, "Halvin": {"really": ["Crimson Ghosh", "Eastern Tea Leaves", "Exquisite Ring", "Garum", "Gaudy Bangle", "Jade Panther Figure", "Magic-Trick Set", "Potted Vegetables", "Simple Pastries", "Skin Balm", "Village Recipes"], "likes": "Growing vegetables, shopping, street performing. cheering crowds", "interests": "Practicing magic tricks, housekeeping"}, "Dadao": {"really": ["Coffee Pastries", "Fragrant Pastries", "Ginji Cervi", "Honey Milk", "Honey Pastries", "Huge Fish Eyeball", "Jamel Milk", "Mature Dried Cervi", "Mellow Pastries", "Pastry Cookbook", "Potted Vegetables", "Saraminian Sweets", "Simple Pastries", "Strong Cervi", "Weak Cervi", "Yarc Milk"], "likes": "Women (especially Anatolia), machines, good food, fighting", "interests": "Tinkering with machines, watching out for the weak"}, "Jasmine": {"really": ["Arrowhead Gem", "Crimson Ghosh", "Dual Fish Knives", "Honey Pastries", "Jamel Milk", "Joint-Relief Gloves", "Kitten Figurine", "Magic-Trick Set", "Niiza Garum", "Outdoor Cooking Set", "Pack of Pastels", "Pastry Cookbook", "Protection Figurine", "Pure-White Cervi", "Rare Spices", "Sturdy Rucksack", "Training Pillar", "Training Weights"], "likes": "Memories of her spouse, mercenary friends, trying to get rich", "interests": "Counting money, managing her mercenary group"}, "Peppe": {"really": ["Board-Game Tactics", "Common Coffee", "Crimson Ghosh", "Joint-Relief Gloves", "Kitten Figurine", "Magic-Trick Set", "Outdoor Cooking Set", "Pack of Pastels", "Pastry Cookbook", "Protection Figurine", "Sharp Fishhook", "Spirit Board Game", "Sturdy Rucksack", "The Works of Dante", "Training Pillar", "Training Weights"], "likes": "The spirits, the sun, his hometown", "interests": "Hunting, people watching in the city"}, "Inyoni": {"really": ["Eastern Black Silk", "Eastern Tea Leaves", "Huge Fish Eyeball", "Sharp Fishhook", "Sturdy Rucksack", "Training Bracelet", "Wing Fletching"], "likes": "Her family and hometown, hunting, farm work, bow maintenance", "interests": "Archery training, being frugal"}}};
 const PATHS = ["All","Cai","Dietrich","Theodora","Leda"];
-const st = {path:"All", sort:"name", asc:true, q:"", hideNA:false, openGifts:false, show:"all"};
+const st = {path:"All", sort:"name", asc:true, q:"", hideNA:false, openGifts:false, show:"all", tab:"recruits", planRoute:"Cai", renownHigh:false, spread:false};
 let got = new Set();
 try{ got = new Set(JSON.parse(localStorage.getItem("fe-recruited")||"[]")); }catch(e){}
 const saveGot = () => { try{ localStorage.setItem("fe-recruited", JSON.stringify([...got])); }catch(e){} };
+let inv = [];   // [{n: gift name, q: count}]
+try{ inv = JSON.parse(localStorage.getItem("fe-gifts")||"[]").filter(g => g && g.n && g.q > 0); }catch(e){}
+const saveInv = () => { try{ localStorage.setItem("fe-gifts", JSON.stringify(inv)); }catch(e){} };
 try{ Object.assign(st, JSON.parse(localStorage.getItem("fe-recruit")||"{}")); }catch(e){}
-const save = () => { try{ localStorage.setItem("fe-recruit", JSON.stringify({path:st.path,sort:st.sort,asc:st.asc,hideNA:st.hideNA,openGifts:st.openGifts,show:st.show})); }catch(e){} };
+const save = () => { try{ localStorage.setItem("fe-recruit", JSON.stringify({path:st.path,sort:st.sort,asc:st.asc,hideNA:st.hideNA,openGifts:st.openGifts,show:st.show,tab:st.tab,planRoute:st.planRoute,renownHigh:st.renownHigh,spread:st.spread})); }catch(e){} };
 const $ = id => document.getElementById(id);
 const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function hl(s){ s = esc(s); if(!st.q) return s;
@@ -271,28 +349,169 @@ document.addEventListener("change", e => {
   const n = e.target.dataset && e.target.dataset.name; if(!n) return;
   e.target.checked ? got.add(n) : got.delete(n); saveGot();
   // keep the page from jumping: only re-render when the filter hides the card
-  const id = e.target.id; render();
+  const id = e.target.id; render(); renderPlan();
   const again = document.getElementById(id); if(again) again.focus(); else $("list").focus();
-});
-const msg = s => $("iomsg").textContent = s;
-$("copyCode").addEventListener("click", () => {
-  const code = btoa(unescape(encodeURIComponent(JSON.stringify([...got]))));
-  $("io").value = code;
-  navigator.clipboard?.writeText(code).then(() => msg("Copied. Paste it into the box on your other device."), () => { $("io").select(); msg("Code is in the box. Select it and copy."); });
-});
-$("loadCode").addEventListener("click", () => {
-  try{ const arr = JSON.parse(decodeURIComponent(escape(atob($("io").value.trim()))));
-    if(!Array.isArray(arr)) throw 0; got = new Set(arr); saveGot(); render(); msg(`Loaded: ${got.size} recruited.`);
-  }catch(e){ msg("That code didn't work. Copy the whole code from the other device and try again."); }
-});
-let armed = false;
-$("clearAll").addEventListener("click", () => {
-  if(!armed){ armed = true; $("clearAll").textContent = "Tap again to untick everyone"; setTimeout(() => { armed = false; $("clearAll").textContent = "Untick everyone"; }, 4000); return; }
-  armed = false; got.clear(); saveGot(); $("clearAll").textContent = "Untick everyone"; render(); msg("Everyone unticked.");
 });
 $("openGifts").addEventListener("change", e => { st.openGifts = e.target.checked; render(); });
 $("reveal").addEventListener("click", () => { const l = $("tslist"); l.hidden = !l.hidden; $("reveal").textContent = l.hidden ? "Show timeskip recruits" : "Hide timeskip recruits"; $("reveal").setAttribute("aria-expanded", !l.hidden); });
+// ---------- tabs ----------
+function showTab(name, focus){
+  st.tab = name;
+  document.querySelectorAll(".tabs button").forEach(b => {
+    const on = b.dataset.tab === name;
+    b.setAttribute("aria-selected", on); b.tabIndex = on ? 0 : -1;
+    $("pane-" + b.dataset.tab).hidden = !on;
+    if(on && focus) b.focus();
+  });
+  if(name === "plan") renderPlan();
+  if(name === "save") $("myCode").value = makeCode();
+  save();
+}
+document.querySelector(".tabs").addEventListener("click", e => { const b = e.target.closest("button"); if(b) showTab(b.dataset.tab); });
+document.querySelector(".tabs").addEventListener("keydown", e => {
+  if(e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+  const tabs = ["recruits","plan","save"], i = tabs.indexOf(st.tab);
+  showTab(tabs[(i + (e.key === "ArrowRight" ? 1 : 2)) % 3], true);
+});
+
+// ---------- gift planner ----------
+const ALL_GIFTS = [...new Set(Object.values(DATA.gifts).flatMap(g => g.really))].sort((a,b) => a.localeCompare(b));
+const giftKey = s => s.trim().toLowerCase();
+const canon = s => ALL_GIFTS.find(g => giftKey(g) === giftKey(s)) || s.trim();
+$("giftList").innerHTML = ALL_GIFTS.map(g => `<option value="${esc(g)}"></option>`).join("");
+
+// Who on this route can still be won over with this gift, best first
+function candidates(gift, route){
+  return DATA.units.filter(u => {
+    const e = u.paths[route], g = DATA.gifts[u.name];
+    return e && e.support != null && !got.has(u.name) && g && g.really.some(x => giftKey(x) === giftKey(gift));
+  }).sort((a,b) => {
+    const x = a.paths[route], y = b.paths[route];
+    return candidatesOrder(a, b, route);
+  });
+}
+
+function renderPlan(){
+  const route = st.planRoute;
+  $("planRoute").value = route; $("spread").checked = st.spread;
+  $("inv").innerHTML = inv.map((g,i) => {
+    const known = ALL_GIFTS.some(x => giftKey(x) === giftKey(g.n));
+    return `<li><span class="gname">${esc(g.n)}${known ? "" : `<span class="warn">Not on anyone's really-liked list</span>`}</span>
+      <span class="qty"><button type="button" data-dec="${i}" aria-label="One less ${esc(g.n)}">−</button><output aria-label="${esc(g.n)} count">${g.q}</output><button type="button" data-inc="${i}" aria-label="One more ${esc(g.n)}">+</button></span>
+      <button type="button" class="rm" data-rm="${i}" aria-label="Remove ${esc(g.n)}">×</button></li>`;
+  }).join("") || `<li class="na">No gifts yet. Add the ones in your convoy above.</li>`;
+
+  // hand out every copy
+  const plan = new Map();   // name -> [{gift, q, alts}]
+  const unused = [];
+  for(const g of inv){
+    const c = candidates(g.n, route);
+    if(!c.length){ unused.push(g); continue; }
+    for(let k = 0; k < g.q; k++){
+      const who = st.spread ? c[k % c.length] : c[0];
+      const list = plan.get(who.name) || []; plan.set(who.name, list);
+      let row = list.find(r => r.gift === g.n);
+      if(!row){ row = {gift:g.n, q:0, alts:c.filter(x => x !== who).map(x => x.name)}; list.push(row); }
+      row.q++;
+    }
+  }
+  const order = [...plan.keys()].map(n => DATA.units.find(u => u.name === n))
+    .sort((a,b) => candidatesOrder(a,b,route));
+  let html = order.map((u,i) => {
+    const e = u.paths[route];
+    const pills = `<span class="pill">${e.part === 0 ? "Prologue" : "Part I"} Ch ${e.chapter}</span><span class="pill">Support Lv ${e.support}</span>` + (e.renown != null ? `<span class="pill ren"><b>${e.renown}</b> Renown</span>` : "");
+    const gives = plan.get(u.name).map(r => `<li><span class="what">${r.q}× ${esc(r.gift)}</span>${r.alts.length ? `<span class="alt">Also really liked by ${r.alts.map(esc).join(", ")}</span>` : ""}</li>`).join("");
+    return `<article class="card single"><div class="head">${crest(u.name)}<h3>${esc(u.name)}</h3><span class="rank">#${i+1}</span></div><div class="pills" style="margin-bottom:8px">${pills}</div><ul class="give">${gives}</ul></article>`;
+  }).join("");
+  if(!inv.length) html = `<p class="sub">Your plan shows up here once you add gifts.</p>`;
+  else if(!order.length) html = `<p class="sub">Nobody left to recruit on ${esc(route)}'s route really likes these gifts.</p>`;
+  if(unused.length) html += `<article class="card single"><h3>Keep for now</h3><p class="gtext">No unrecruited character on ${esc(route)}'s route really likes: ${unused.map(g => `${g.q}× ${esc(g.n)}`).join(", ")}.</p></article>`;
+  $("plan").innerHTML = html;
+  saveInv(); save(); $("myCode").value = makeCode();
+}
+function candidatesOrder(a, b, route){
+  const x = a.paths[route], y = b.paths[route];
+  // easiest recruits first: lowest Support level, then lowest Renown, then earliest chapter
+  return (x.support - y.support) || ((x.renown ?? 0) - (y.renown ?? 0))
+    || (chapKey(x) - chapKey(y)) || a.name.localeCompare(b.name);
+}
+
+$("addGift").addEventListener("submit", e => {
+  e.preventDefault();
+  const name = canon($("giftName").value), q = Math.max(1, Math.min(99, parseInt($("giftQty").value, 10) || 1));
+  if(!name) return;
+  const have = inv.find(g => giftKey(g.n) === giftKey(name));
+  have ? have.q = Math.min(99, have.q + q) : inv.push({n:name, q});
+  $("addmsg").textContent = `Added ${q}× ${name}.`;
+  $("giftName").value = ""; $("giftQty").value = 1; $("giftName").focus();
+  renderPlan();
+});
+$("inv").addEventListener("click", e => {
+  const b = e.target.closest("button"); if(!b) return;
+  const i = +(b.dataset.inc ?? b.dataset.dec ?? b.dataset.rm);
+  if(b.dataset.inc != null) inv[i].q = Math.min(99, inv[i].q + 1);
+  else if(b.dataset.dec != null){ inv[i].q--; if(inv[i].q < 1) inv.splice(i,1); }
+  else inv.splice(i,1);
+  const sel = b.dataset.inc != null ? `[data-inc="${i}"]` : b.dataset.dec != null ? `[data-dec="${i}"]` : null;
+  renderPlan();
+  const again = sel && document.querySelector(sel); (again || $("giftName")).focus();
+});
+$("planRoute").addEventListener("change", e => { st.planRoute = e.target.value; renderPlan(); });
+$("spread").addEventListener("change", e => { st.spread = e.target.checked; renderPlan(); });
+
+// ---------- save codes ----------
+// FEW1-<base64url JSON>. Characters and known gifts are stored by index to keep codes short.
+const NAMES = [...DATA.units.map(u => u.name), ...DATA.timeskip.map(t => t.name)];
+const b64 = s => btoa(unescape(encodeURIComponent(s))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+const unb64 = s => decodeURIComponent(escape(atob(s.replace(/-/g,"+").replace(/_/g,"/"))));
+function makeCode(){
+  const r = [...got].map(n => NAMES.indexOf(n)).filter(i => i >= 0).sort((a,b) => a-b);
+  const g = inv.map(x => { const i = ALL_GIFTS.findIndex(a => giftKey(a) === giftKey(x.n)); return [i >= 0 ? i : x.n, x.q]; });
+  return "FEW1-" + b64(JSON.stringify({r, g, p:st.planRoute}));
+}
+function readCode(code){
+  code = code.replace(/\s+/g,"");
+  if(code.startsWith("FEW1-")){
+    const d = JSON.parse(unb64(code.slice(5)));
+    if(!Array.isArray(d.r) || !Array.isArray(d.g)) throw 0;
+    return { got: d.r.map(i => NAMES[i]).filter(Boolean),
+             inv: d.g.map(([k,q]) => ({n: typeof k === "number" ? ALL_GIFTS[k] : String(k), q:+q})).filter(x => x.n && x.q > 0),
+             route: ["Cai","Dietrich","Theodora","Leda"].includes(d.p) ? d.p : null };
+  }
+  const arr = JSON.parse(unb64(code));           // older checklist-only codes
+  if(!Array.isArray(arr)) throw 0;
+  return { got: arr.filter(n => NAMES.includes(n)), inv: null, route: null };
+}
+$("copyCode").addEventListener("click", () => {
+  const code = makeCode(); $("myCode").value = code;
+  const done = () => $("copymsg").textContent = "Copied. Open this page on your other device, go to Save code and paste it under Load a code.";
+  const fallback = () => { $("myCode").focus(); $("myCode").select(); $("copymsg").textContent = "Code selected. Copy it from the box."; };
+  navigator.clipboard ? navigator.clipboard.writeText(code).then(done, fallback) : fallback();
+});
+$("loadCode").addEventListener("click", () => {
+  const m = s => $("iomsg").textContent = s;
+  try{
+    const d = readCode($("io").value.trim());
+    got = new Set(d.got); saveGot();
+    if(d.inv) { inv = d.inv; saveInv(); }
+    if(d.route) st.planRoute = d.route;
+    render(); renderPlan(); $("io").value = "";
+    m(`Loaded: ${got.size} recruited` + (d.inv ? `, ${d.inv.reduce((s,x) => s + x.q, 0)} gifts` : "") + ".");
+  }catch(e){ m("That code didn't work. Copy the whole code, starting with FEW1-, and try again."); }
+});
+function twoTap(id, label, confirmLabel, action){
+  let armed = false, timer;
+  $(id).addEventListener("click", () => {
+    if(!armed){ armed = true; $(id).textContent = confirmLabel; timer = setTimeout(() => { armed = false; $(id).textContent = label; }, 4000); return; }
+    clearTimeout(timer); armed = false; $(id).textContent = label; action();
+  });
+}
+twoTap("clearAll", "Untick everyone", "Tap again to untick everyone", () => { got.clear(); saveGot(); render(); renderPlan(); $("iomsg").textContent = "Everyone unticked."; });
+twoTap("clearGifts", "Remove all gifts", "Tap again to remove all gifts", () => { inv = []; saveInv(); renderPlan(); $("iomsg").textContent = "All gifts removed."; });
+
 render();
+renderPlan();
+showTab(["recruits","plan","save"].includes(location.hash.slice(1)) ? location.hash.slice(1) : st.tab);
 </script>
 
 </body>
