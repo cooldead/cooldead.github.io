@@ -231,6 +231,10 @@ mark{background:var(--gold-soft);color:inherit;border-radius:3px}
   </section>
 
   <p class="src">Recruitment data from <a href="https://game8.co/games/Fire-Emblem-Fortunes-Weave/archives/620957">Game8</a>. Gift data merged from Game8 (<a href="https://game8.co/games/Fire-Emblem-Fortunes-Weave/archives/623690">gift guide</a>, <a href="https://game8.co/games/Fire-Emblem-Fortunes-Weave/archives/621535">gift list</a>), <a href="https://gamerant.com/fire-emblem-fortunes-weave-best-gifts-guide/">GameRant</a> and <a href="https://selphie1999gaming.com/game-guides/fire-emblem-fortunes-weave/fire-emblem-fortunes-weave-gifts-for-all-characters/">Selphie1999</a>. The guides don't always agree, so each gift shows which ones list it. Original data pulled 27 Sep 2026. Selected gift additions checked 29 Sep 2026 against <a href="https://raiderking.com/fire-emblem-fortunes-weave-all-loved-gifts-guide/">Raider King</a>; entries marked uncertain there are excluded.</p>
+  <footer style="margin-top:24px;padding-bottom:16px">
+    <button type="button" class="btn" id="refreshPage">Refresh page</button>
+    <p class="sub" style="margin-top:8px">Load the latest site version. Your saved checklist and gifts stay on this device.</p>
+  </footer>
 </main>
 
 <script>
@@ -525,6 +529,15 @@ function twoTap(id, label, confirmLabel, action){
 twoTap("clearAll", "Untick everyone", "Tap again to untick everyone", () => { got.clear(); saveGot(); render(); renderPlan(); $("iomsg").textContent = "Everyone unticked."; });
 twoTap("clearGifts", "Remove all gifts", "Tap again to remove all gifts", () => { inv = []; saveInv(); renderPlan(); $("iomsg").textContent = "All gifts removed."; });
 
+$("refreshPage").addEventListener("click", () => {
+  const url = new URL(window.location.href);
+  if(url.protocol === "http:" || url.protocol === "https:") {
+    url.searchParams.set("refresh", Date.now().toString());
+    window.location.replace(url.href);
+  } else {
+    window.location.reload();
+  }
+});
 render();
 renderPlan();
 showTab(["recruits","plan","save"].includes(location.hash.slice(1)) ? location.hash.slice(1) : st.tab);
